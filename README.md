@@ -12,18 +12,35 @@
 - `systemd timer` 每 2 分钟检查一次（可改）
 - 纯 Python 标准库 + PyYAML，无 Docker 依赖
 
-## 快速开始（Debian / Ubuntu）
+## 一键运行命令（推荐）
+
+登录 VPS 终端（root），执行：
 
 ```bash
-# 1) 下载
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/lindanbo1688-ctrl/cf-ddns/main/install.sh)"
+```
+
+若系统未预装 `curl`，可用 `wget`：
+
+```bash
+bash -c "$(wget -qO- https://raw.githubusercontent.com/lindanbo1688-ctrl/cf-ddns/main/install.sh)"
+```
+
+交互流程：
+
+1. 选择几分钟查一次 IP（默认 2 分钟）
+2. 粘贴 Cloudflare API Token
+3. 填写 Zone / 主机记录（默认 `douyin.uk` + `node`）
+4. 自动安装并立刻同步一次
+
+## 手动安装（可选）
+
+```bash
 git clone https://github.com/lindanbo1688-ctrl/cf-ddns.git
 cd cf-ddns
-
-# 2) 安装
 bash scripts/install.sh
-
-# 3) 编辑配置
 nano /etc/cf-ddns/config.yaml
+/opt/cf-ddns/.venv/bin/python -m cf_ddns -c /etc/cf-ddns/config.yaml once --force
 ```
 
 配置示例：
@@ -37,10 +54,6 @@ interval_seconds: 120
 ```
 
 ```bash
-# 4) 立刻同步一次
-/opt/cf-ddns/.venv/bin/python -m cf_ddns -c /etc/cf-ddns/config.yaml once --force
-
-# 5) 看结果
 journalctl -u cf-ddns.service -n 50 --no-pager
 tail -n 50 /var/log/cf-ddns.log
 ```
